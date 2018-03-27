@@ -21,6 +21,30 @@ console_handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.addHandler(console_handler)
 
+def create_arg_parser():
+    """
+    Parses command line arguments.
+    
+    Returns:
+        An ArgumentParser object.
+    """
+
+    epilog = """\
+       This script works as ***.
+       """
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     epilog=textwrap.dedent(epilog))
+    parser.add_argument("filter_query", help="Query used to filter desired observables (confidence, type, time window, ...).", metavar="FILTER_QUERY")
+    parser.add_argument("-c", "--configfile", help="Configuration file.", default="/etc/***/server.conf")
+    parser.add_argument("-d", "--dryrun", help="***.", action='store_true', default=False)
+    parser.add_argument("-l", "--loglevel", help="Logging level (DEBUG, INFO or ERROR).", default="INFO")
+    parser.add_argument("-p", "--pprint", help="Pretty print exported observables to STDOUT.", action='store_true', default=False)
+    parser.add_argument("-s", "--singleshot", help="Single shot mode (***).", action='store_true', default=False)
+    parser.add_argument("-t", "--time", help="Polling time (in seconds).", default=60)    
+
+    return parser
+
 def main(argv):
     # parse the args
     arg_parser = create_arg_parser()
