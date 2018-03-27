@@ -77,7 +77,8 @@ def main(argv):
         logger.error("Could not parse config file!")
         exit(1)
 
-    application.run(host=config['Server']['BindAddress'], port=config['Server']['Port'])
+    # run the Flask app
+    application.run(host=config['Server']['BindAddress'], port=int(config['Server']['Port']))
 
 if __name__ == "__main__":
     try:
