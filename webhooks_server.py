@@ -45,6 +45,20 @@ def create_arg_parser():
 
     return parser
 
+def set_logging_level(lg, level):
+    """
+    Set the level of verbosity of a logger instance.
+    """
+    # Configure logging level
+    if level == 'DEBUG':
+        lg.setLevel(logging.DEBUG)
+    elif level == 'INFO':
+        lg.setLevel(logging.INFO)
+    elif level == 'WARNING':
+        lg.setLevel(logging.WARNING)   
+    else:
+        lg.setLevel(logging.ERROR)
+
 def main(argv):
     # parse the args
     arg_parser = create_arg_parser()
