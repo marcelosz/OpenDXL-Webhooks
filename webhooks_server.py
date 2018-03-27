@@ -21,6 +21,10 @@ console_handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.addHandler(console_handler)
 
+# Config
+from configobj import ConfigObj, ConfigObjError
+config = None
+
 def create_arg_parser():
     """
     Parses command line arguments.
@@ -36,12 +40,10 @@ def create_arg_parser():
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=textwrap.dedent(epilog))
     #parser.add_argument("filter_query", help="Query used to filter desired observables (confidence, type, time window, ...).", metavar="FILTER_QUERY")
-    parser.add_argument("-c", "--configfile", help="Configuration file.", default="/etc/***/server.conf")
-    parser.add_argument("-d", "--dryrun", help="***.", action='store_true', default=False)
+    parser.add_argument("-c", "--configfile", help="Configuration file.")
+    #parser.add_argument("-d", "--dryrun", help="***.", action='store_true', default=False)
     parser.add_argument("-l", "--loglevel", help="Logging level (DEBUG, INFO or ERROR).", default="INFO")
-    parser.add_argument("-p", "--pprint", help="Pretty print exported observables to STDOUT.", action='store_true', default=False)
-    parser.add_argument("-s", "--singleshot", help="Single shot mode (***).", action='store_true', default=False)
-    parser.add_argument("-t", "--time", help="Polling time (in seconds).", default=60)    
+    #parser.add_argument("-p", "--pprint", help="Pretty print exported observables to STDOUT.", action='store_true', default=False)
 
     return parser
 
@@ -75,7 +77,7 @@ def main(argv):
         logger.error("Could not parse config file!")
         exit(1)
 
-    application.run()
+    application.run(host=config['Server']['BindAddress'], port=config['Server']['Port'])
 
 if __name__ == "__main__":
     try:
