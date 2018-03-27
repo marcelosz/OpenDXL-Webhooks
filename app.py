@@ -11,5 +11,5 @@ class SplunkNetworkMisuse(Resource):
 
 api.add_resource(SplunkNetworkMisuse, '/api/splunk/network-misuse')
 
-if __name__ == '__main__':
-    application.run(host='0.0.0.0')
+#if __name__ == '__main__':
+#    application.run(host='0.0.0.0')
