@@ -35,7 +35,7 @@ def create_arg_parser():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=textwrap.dedent(epilog))
-    parser.add_argument("filter_query", help="Query used to filter desired observables (confidence, type, time window, ...).", metavar="FILTER_QUERY")
+    #parser.add_argument("filter_query", help="Query used to filter desired observables (confidence, type, time window, ...).", metavar="FILTER_QUERY")
     parser.add_argument("-c", "--configfile", help="Configuration file.", default="/etc/***/server.conf")
     parser.add_argument("-d", "--dryrun", help="***.", action='store_true', default=False)
     parser.add_argument("-l", "--loglevel", help="Logging level (DEBUG, INFO or ERROR).", default="INFO")
