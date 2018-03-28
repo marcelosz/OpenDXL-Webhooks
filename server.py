@@ -64,7 +64,6 @@ def init_plugins(path):
         module = None
         location = os.path.join(path, i)
         full_file_name = location + os.sep + "/__init__.py"
-	print(full_file_name)
         logger.debug("Trying to load plugin %s...", i)
         if not os.path.isdir(location) or not PluginsMainModule + ".py" in os.listdir(location):
             # TODO - add error msg here

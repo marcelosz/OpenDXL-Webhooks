@@ -4,7 +4,10 @@
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
-import cherrypy
+import sys, cherrypy
+#add parent path to import modules
+sys.path.append("..")
+import dxl_util
 
 @cherrypy.expose
 class TestPlugin(object):
@@ -15,6 +18,7 @@ class TestPlugin(object):
         print("Request Headers: ", cherrypy.request.headers)
         #body = cherrypy.request.body.read()
         print("Request Body: ", cherrypy.request.body.read())
+	dxl_util.dxl_init()
         return "OK"
         
 def init():
