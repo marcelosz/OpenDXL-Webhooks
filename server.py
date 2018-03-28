@@ -9,8 +9,9 @@ __license__ = "GPL"
 
 import sys, logging, argparse, textwrap, os
 import tokenize
-import dxl_util
 import cherrypy
+from configobj import ConfigObj, ConfigObjError
+import conf_util
 #import requests, json, re, urllib3, time
 
 # Enable logging, this will also direct built-in DXL and CherryPy log messages.
@@ -21,10 +22,6 @@ console_handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.addHandler(console_handler)
 logging.getLogger('cherrypy').propagate = False
-
-# Config
-from configobj import ConfigObj, ConfigObjError
-config = None
 
 def create_arg_parser():
     """
@@ -54,7 +51,7 @@ if sys.version_info[0] < 3:
 else:
     import importlib
 
-def init_plugins(path, plugins_config_obj):
+def init_plugins(path):
     """
     Get list of plugins, load and initialize them.
     """
@@ -77,8 +74,8 @@ def init_plugins(path, plugins_config_obj):
         # TODO - enhance error handling here            
         # map and call plugin's init() function
         init = getattr(module, 'init')
-        init(plugins_config_obj[i])
-    return True
+        init()
+    return True 
 
 def main(argv):
     # parse the args
@@ -98,30 +95,28 @@ def main(argv):
 
     logger.info("Starting OpenDXL-Webhooks server...")
     # read main cfg file
-    try:
-        config = ConfigObj(args.configfile, raise_errors=True, file_error=True)
-    except:
-        # TODO - enhance error handling here 
-        logger.error("Could not parse main config file!")
+    conf_util.cfg = conf_util.read_cfg(args.configfile)
+    if not conf_util.cfg:
+        logger.error("Error reading main config file!")
         exit(1)
     # read plugins cfg file
-    try:
-        plugins_config = ConfigObj(config['Server']['PluginsConfig'], raise_errors=True, file_error=True)
-    except:
-        # TODO - enhance error handling here 
-        logger.error("Could not parse plugins config file!")
+    conf_util.plugin_cfg = conf_util.read_cfg(conf_util.cfg['Server']['PluginsConfig'])
+    if not conf_util.cfg:
+        logger.error("Error reading plugins config file!")
         exit(1)
 
     # get plugins and execute their initializers
-    init_plugins(config['Server']['PluginsDir'], plugins_config)
+    init_plugins(conf_util.cfg['Server']['PluginsDir'])
 
     # setup and run the CherryPy app
-    cherrypy.config.update({'server.socket_host': config['Server']['BindAddress'],
-                            'server.socket_port': int(config['Server']['BindPort']),
-                            'log.screen': config['Server']['CherryPyLoggerEnable'] in ['true', 'True', 'yes', 'Yes'],
+    cherrypy.config.update({'server.socket_host': conf_util.cfg['Server']['BindAddress'],
+                            'server.socket_port': int(conf_util.cfg['Server']['BindPort']),
+                            'log.screen': conf_util.cfg['Server']['CherryPyLoggerEnable'] in ['true', 'True', 'yes', 'Yes'],
                             })
     cherrypy.engine.start()
     cherrypy.engine.block()
+    # TODO
+    # sys.modules[__name__].__doc__    
 
 if __name__ == "__main__":
     main(sys.argv[1:])

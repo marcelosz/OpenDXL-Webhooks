@@ -7,7 +7,7 @@ __license__ = "GPL"
 import sys, cherrypy
 #add parent path to import modules
 sys.path.append("..")
-import dxl_util
+#import dxl_util
 
 @cherrypy.expose
 class TestPlugin(object):
@@ -18,7 +18,7 @@ class TestPlugin(object):
         print("Request Headers: ", cherrypy.request.headers)
         #body = cherrypy.request.body.read()
         print("Request Body: ", cherrypy.request.body.read())
-	dxl_util.dxl_init()
+    	#dxl_util.dxl_init()
         return "OK"
         
 def init():

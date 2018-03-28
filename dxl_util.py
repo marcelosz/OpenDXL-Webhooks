@@ -4,6 +4,8 @@
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
+import conf_util
+
 # DXL imports
 from dxlclient.client import DxlClient
 from dxlclient.client_config import DxlClientConfig
@@ -16,7 +18,7 @@ def dxl_init(dxl_config):
     # TODO - enhance error handling here
     # DxlClientConfig from DXL configuration file
     logger.info("Loading DXL config from: %s", dxl_config)
-    dxl_config = DxlClientConfig.create_dxl_config_from_file(config['DXL']['Config'])
+    dxl_config = DxlClientConfig.create_dxl_config_from_file(conf_util.cfg['DXL']['Config'])
 
 #
 # Connect to DXL and publish the observables as events
