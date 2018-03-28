@@ -7,13 +7,12 @@ __license__ = "GPL"
 import cherrypy
 
 @cherrypy.expose
-class SplunkNetworkMisuse(object):
+class SplunkAlertAction(object):
 
-    @cherrypy.tools.accept(media='text/plain')
+    @cherrypy.tools.accept(media='application/json')
 
-    def POST(self, length=8):
+    def POST(self):
         print("Request Headers: ", cherrypy.request.headers)
-        #body = cherrypy.request.body.read()
         print("Request Body: ", cherrypy.request.body.read())
         return "OK"
         
@@ -27,4 +26,4 @@ def init():
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
   }
-  cherrypy.tree.mount(SplunkNetworkMisuse(), '/webhooks/splunk/network-misuse', conf)
+  cherrypy.tree.mount(SplunkAlertAction(), '/webhooks/splunk/network-misuse', conf)

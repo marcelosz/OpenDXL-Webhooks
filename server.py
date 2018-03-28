@@ -54,7 +54,7 @@ if sys.version_info[0] < 3:
 else:
     import importlib
 
-def init_plugins(path):
+def init_plugins(path, plugins_config_obj):
     """
     Get list of plugins, load and initialize them.
     """
@@ -68,15 +68,16 @@ def init_plugins(path):
         if not os.path.isdir(location) or not PluginsMainModule + ".py" in os.listdir(location):
             # TODO - add error msg here
             continue
-	if sys.version_info[0] < 3:
+    
+    if sys.version_info[0] < 3:
 	    module = imp.load_source(i, full_file_name)
-	else:
-            spec = importlib.util.spec_from_file_location(i, full_file_name)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-        # map and call plugin's init() function
-        init = getattr(module, 'init')
-        init()
+    else:
+        spec = importlib.util.spec_from_file_location(i, full_file_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    # map and call plugin's init() function
+    init = getattr(module, 'init')
+    init(plugins_config_obj)
     return True
 
 def main(argv):
@@ -95,18 +96,24 @@ def main(argv):
     else:
         logger.setLevel(logging.ERROR)    
 
-    # read cfg file
+    logger.info("Starting OpenDXL-Webhooks server...")
+    # read main cfg file
     try:
         config = ConfigObj(args.configfile, raise_errors=True, file_error=True)
     except:
         # TODO - enhance error handling here 
-        logger.error("Could not parse config file!")
+        logger.error("Could not parse main config file!")
+        exit(1)
+    # read plugins cfg file
+    try:
+        plugins_config = ConfigObj(config['Server']['PluginsConfig'], raise_errors=True, file_error=True)
+    except:
+        # TODO - enhance error handling here 
+        logger.error("Could not parse plugins config file!")
         exit(1)
 
-    logger.info("Starting OpenDXL-Webhooks server...")        
-
     # get plugins and execute their initializers
-    init_plugins(config['Server']['PluginsDir'])
+    init_plugins(config['Server']['PluginsDir'], plugins_config)
 
     # setup and run the CherryPy app
     cherrypy.config.update({'server.socket_host': config['Server']['BindAddress'],
