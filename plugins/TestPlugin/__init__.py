@@ -27,4 +27,4 @@ def init():
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
   }
-  cherrypy.tree.mount(TestPluginSplunkNetworkMisuse(), '/webhooks/test', conf)
+  cherrypy.tree.mount(TestPlugin(), '/webhooks/test', conf)

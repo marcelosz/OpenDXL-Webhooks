@@ -7,7 +7,7 @@
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
-import sys, logging, argparse, textwrap, os, importlib
+import sys, logging, argparse, textwrap, os
 import tokenize
 import dxl_util
 import cherrypy
@@ -49,32 +49,36 @@ def create_arg_parser():
     return parser
 
 # Plugin
-PluginsMainModule = "__init__"
-def get_plugins(path):
+if sys.version_info[0] < 3:
+    import imp
+else:
+    import importlib
+
+def init_plugins(path):
     """
-    Get plugins.
+    Get list of plugins, load and initialize them.
     """
-    # get plugins
-    plugins = []
+    PluginsMainModule = "__init__"
     possiblePlugins = os.listdir(path)
     for i in possiblePlugins:
+        module = None
         location = os.path.join(path, i)
-        full_file_name = (location + "\__init__.py")
+        full_file_name = location + os.sep + "/__init__.py"
+	print(full_file_name)
+        logger.debug("Trying to load plugin %s...", i)
         if not os.path.isdir(location) or not PluginsMainModule + ".py" in os.listdir(location):
             # TODO - add error msg here
             continue
-        spec = importlib.util.spec_from_file_location(i, full_file_name)
-        plugins.append({"name": i, "full_file_name": full_file_name, "spec": spec})
-    return plugins
-
-def load_plugin(plugin):
-    """
-    Load plugin.
-    """    
-    spec = plugin["spec"]
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+	if sys.version_info[0] < 3:
+	    module = imp.load_source(i, full_file_name)
+	else:
+            spec = importlib.util.spec_from_file_location(i, full_file_name)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+        # map and call plugin's init() function
+        init = getattr(module, 'init')
+        init()
+    return True
 
 def main(argv):
     # parse the args
@@ -103,12 +107,7 @@ def main(argv):
     logger.info("Starting OpenDXL-Webhooks server...")        
 
     # get plugins and execute their initializers
-    for i in get_plugins(config['Server']['PluginsDir']):
-        logger.debug("Loading plugin %s...", i["name"])
-        plugin = load_plugin(i)
-        # map and call plugin's init() function
-        init = getattr(plugin, 'init')
-        init()
+    init_plugins(config['Server']['PluginsDir'])
 
     # setup and run the CherryPy app
     cherrypy.config.update({'server.socket_host': config['Server']['BindAddress'],
