@@ -17,7 +17,7 @@ class SplunkAlertAction(object):
         return "OK"
         
 def init():
-  conf = {
+    conf = {
         '/': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'request.method_with_bodies': True,
@@ -25,5 +25,5 @@ def init():
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
-  }
-  cherrypy.tree.mount(SplunkAlertAction(), '/webhooks/splunk/network-misuse', conf)
+    }
+    cherrypy.tree.mount(SplunkAlertAction(), '/webhooks/splunk/network-misuse', conf)

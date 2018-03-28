@@ -68,16 +68,16 @@ def init_plugins(path, plugins_config_obj):
         if not os.path.isdir(location) or not PluginsMainModule + ".py" in os.listdir(location):
             # TODO - add error msg here
             continue
-    
-    if sys.version_info[0] < 3:
-	    module = imp.load_source(i, full_file_name)
-    else:
-        spec = importlib.util.spec_from_file_location(i, full_file_name)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-    # map and call plugin's init() function
-    init = getattr(module, 'init')
-    init(plugins_config_obj)
+        if sys.version_info[0] < 3:
+	        module = imp.load_source(i, full_file_name)
+        else:
+            spec = importlib.util.spec_from_file_location(i, full_file_name)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+        # TODO - enhance error handling here            
+        # map and call plugin's init() function
+        init = getattr(module, 'init')
+        init(plugins_config_obj[i])
     return True
 
 def main(argv):
