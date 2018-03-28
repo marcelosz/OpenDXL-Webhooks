@@ -16,7 +16,8 @@ class SplunkAlertAction(object):
         print("Request Body: ", cherrypy.request.body.read())
         return "OK"
         
-def init():
+def init(plugin_conf):
+    print(plugin_conf)
     conf = {
         '/': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
