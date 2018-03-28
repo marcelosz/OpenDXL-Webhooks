@@ -28,7 +28,7 @@ def dxl_publish(topic, payload):
             logger.debug("Connecting to DXL broker...")
             dxl_client.connect()
             # TODO - handle possible connection errors
-            logger.debug("Publishing message on topic %s."topic)
+            logger.debug("Publishing message on topic %s.", topic)
             dxl_event = Event(topic)
             logger.debug("Msg payload: %s", payload)
             dxl_event.payload = str(payload_str).encode()
