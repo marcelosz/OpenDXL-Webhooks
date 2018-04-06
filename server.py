@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """server.py - 
-  ***
+  *** 
   ***."""
 
 __author__ = "Marcelo Souza"
@@ -27,7 +27,7 @@ def create_arg_parser():
     """
     Parses command line arguments.
     
-    Returns:
+    Returns: 
         An ArgumentParser object.
     """
 

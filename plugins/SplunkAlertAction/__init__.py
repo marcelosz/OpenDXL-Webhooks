@@ -4,8 +4,10 @@
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
-import cherrypy
+import sys, cherrypy, json
 import conf_util
+#add parent path to import modules
+sys.path.append("..")
 
 alerts = []
 
@@ -13,7 +15,7 @@ alerts = []
 # Common webapp parameters
 #
 webapp_conf = {
-    '/webhooks/splunk' : {
+    '/' : {
         'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
         'request.method_with_bodies': True,
     }
@@ -24,48 +26,34 @@ webapp_conf = {
 #
 @cherrypy.expose
 class NetworkMisuseHandler(object):
-    
     @cherrypy.tools.accept(media='application/json')
-
     def POST(self):
-        #print(cherrypy.request.request_line)
-        print("Request Headers: ", cherrypy.request.headers)
-        print("Request Body: ", cherrypy.request.body.read())
+        body = cherrypy.request.body.read()
+        json_body = json.loads(body)
+        print("JSON Request Body: ", json.dumps(json_body, indent=2,sort_keys=False))
         return "OK"
 
 @cherrypy.expose
-class NetworkAttack(object):
-
-    @cherrypy.tools.accept(media='text/plain')
-
-    def POST(self, length=8):
-        print("Request Headers: ", cherrypy.request.headers)
-        #body = cherrypy.request.body.read()
-        print("Request Body: ", cherrypy.request.body.read())
-    	#dxl_util.dxl_init()
+class NetworkAttackHandler(object):
+    @cherrypy.tools.accept(media='application/json')
+    def POST(self):
+        body = cherrypy.request.body.read()
+        json_body = json.loads(body)
+        print("JSON Request Body: ", json.dumps(json_body, indent=2,sort_keys=False))
         return "OK"
 
+handlers = {'NetworkMisuse': NetworkMisuseHandler, 'NetworkAttack': NetworkAttackHandler}
 #
 # Initialization
 #
 def init():
     # NetworkMisuse handler
-    name = 'NetworkMisuse'
-    route = conf_util.plugin_cfg['SplunkAlertAction'][name]['Route']    
-    alerts.append({'name': name, 
-                   'route': route, 
-                   'filter': conf_util.plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
-                   'fields': conf_util.plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
-                   'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic']
-                  })    
-    cherrypy.tree.mount(NetworkMisuseHandler(), route, webapp_conf)
-    # NetworkAttack handler
-    name = 'NetworkAttack'
-    route = conf_util.plugin_cfg['SplunkAlertAction'][name]['Route']    
-    alerts.append({'name': name, 
-                   'route': route, 
-                   'filter': conf_util.plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
-                   'fields': conf_util.plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
-                   'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic']
-                  })    
-    cherrypy.tree.mount(NetworkAttack(), route, webapp_conf)
+    for name in conf_util.plugin_cfg['SplunkAlertAction']['Alerts']:
+        route = conf_util.plugin_cfg['SplunkAlertAction'][name]['Route']   
+        alerts.append({'name': name, 
+                       'route': route, 
+                       'filter': conf_util.plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
+                       'fields': conf_util.plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
+                        'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic'] })
+        handler_obj = handlers[name]()
+        cherrypy.tree.mount(handler_obj, route, webapp_conf)
