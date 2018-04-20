@@ -29,8 +29,6 @@ def connect(dxl_config):
         dxl_client = DxlClient(dxl_config)
         logger.debug("Connecting to DXL broker...")
         dxl_client.connect()
-        # Publish test message
-        publish(dxl_client, "/opendxl/webhooks/event/status", "connected")
         return dxl_client
     except Exception as e:
         logger.error("Could not initialize OpenDXL client ({0}).".format(e.message))
