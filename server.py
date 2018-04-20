@@ -110,7 +110,9 @@ def main(argv):
     init_plugins(conf_util.cfg['Server']['PluginsDir'])
 
     # DXL init and connection
-    dxl_config = dxl_init(conf_util.cfg['DXL']['Config'])
+    dxl_config = dxl_util.config_init(conf_util.cfg['DXL']['Config'])
+    dxl_client = dxl_util.connect(dxl_config)
+    dxl_util.publish(dxl_client, "/test/debug/msg", "Debug msg")
 
     # setup and run the CherryPy app
     cherrypy.config.update({'server.socket_host': conf_util.cfg['Server']['BindAddress'],

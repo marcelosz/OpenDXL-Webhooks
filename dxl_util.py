@@ -8,38 +8,42 @@ __license__ = "GPL"
 from dxlclient.client import DxlClient
 from dxlclient.client_config import DxlClientConfig
 from dxlclient.message import Event
+import logging
+
+logger = logging.getLogger()
 
 #
 # DXL config initialization
 #
-def dxl_config_init(cfg_file):
+def config_init(cfg_file):
     # TODO - enhance error handling here
     # DxlClientConfig from DXL configuration file
-    logger.info("Loading DXL config from: %s", dxl_config)
+    logger.info("Loading DXL config from: %s", cfg_file)
     return DxlClientConfig.create_dxl_config_from_file(cfg_file)
 
 #
 # DXL broker connection
 #
-def dxl_connect(dxl_config):
+def connect(dxl_config):
     try:
         with DxlClient(dxl_config) as dxl_client:
             # Connect to DXL Broker
             logger.debug("Connecting to DXL broker...")
             dxl_client.connect()
+	    publish(dxl_client, "/test/connect", "connected")
             return dxl_client
     except Exception as e:
         logger.error("Could not initialize OpenDXL client ({0}).".format(e.message))
         return None
 
 #
-# Connect to DXL and publish the observables as events
+# Send message via DXL
 #
-def dxl_publish(dxl_client, topic, payload):
+def publish(dxl_client, topic, payload_str):
     # TODO - handle possible errors
     logger.debug("Publishing message on topic %s.", topic)
     dxl_event = Event(topic)
-    logger.debug("Msg payload: %s", payload)
+    logger.debug("Msg payload: %s", payload_str)
     dxl_event.payload = str(payload_str).encode()
     dxl_client.send_event(dxl_event)
     logger.debug("Msg published to DXL fabric.")
