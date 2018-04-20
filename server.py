@@ -12,6 +12,7 @@ import tokenize
 import cherrypy
 from configobj import ConfigObj, ConfigObjError
 import conf_util
+import dxl_util
 #import requests, json, re, urllib3, time
 
 # Enable logging, this will also direct built-in DXL and CherryPy log messages.
@@ -107,6 +108,9 @@ def main(argv):
 
     # get plugins and execute their initializers
     init_plugins(conf_util.cfg['Server']['PluginsDir'])
+
+    # DXL init and connection
+    dxl_config = dxl_init(conf_util.cfg['DXL']['Config'])
 
     # setup and run the CherryPy app
     cherrypy.config.update({'server.socket_host': conf_util.cfg['Server']['BindAddress'],
