@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""server.py - 
-  *** 
-  ***."""
+"""opendxl-webhooks-server.py - 
+  OpenDXL Webhooks Server is a simple HTTP server that can handle Webhooks (HTTP requests) and 
+  interact with McAfee OpenDXL bus based on those Webhooks.
+"""
 
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
@@ -12,7 +13,7 @@ import tokenize
 import cherrypy
 from configobj import ConfigObj, ConfigObjError
 import conf_util
-import dxl_util
+#import dxl_util
 #import requests, json, re, urllib3, time
 
 # Enable logging, this will also direct built-in DXL and CherryPy log messages.
@@ -33,8 +34,10 @@ def create_arg_parser():
     """
 
     epilog = """\
-       This script works as ***.
+       This script works as a Webhooks server and an OpenDXL client at the same time. HTTP requests can be handled
+       through a pluggable architecture where OpenDXL events or services interactions can take place.
        """
+    #epilog = sys.modules[__name__].__doc__
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=textwrap.dedent(epilog))
@@ -122,8 +125,6 @@ def main(argv):
                             })
     cherrypy.engine.start()
     cherrypy.engine.block()
-    # TODO
-    # sys.modules[__name__].__doc__    
 
 if __name__ == "__main__":
     main(sys.argv[1:])
