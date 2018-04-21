@@ -7,22 +7,28 @@ __license__ = "GPL"
 import sys, cherrypy
 #add parent path to import modules
 sys.path.append("..")
-#import dxl_util
+import conf_util
+import dxl_globals
+
+import logging
+logger = logging.getLogger()
 
 @cherrypy.expose
 class TestPlugin(object):
 
     @cherrypy.tools.accept(media='text/plain')
 
-    def POST(self, length=8):
-        print("Request Headers: ", cherrypy.request.headers)
-        #body = cherrypy.request.body.read()
-        print("Request Body: ", cherrypy.request.body.read())
-    	#dxl_util.dxl_init()
+    def POST(self):
+        #print("Request Headers: ", cherrypy.request.headers)
+        body = cherrypy.request.body.read()
+        print("Request Body: ", body)
+        #global dxl_client
+        #dxl_client.publish("/opendxl/webhooks/event/test", body)
+        dxl_globals.dxl_client.publish("/opendxl/webhooks/event/test", "Test ok!")        
         return "OK"
         
 def init():
-  conf = {
+    conf = {
         '/': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'request.method_with_bodies': True,
@@ -30,5 +36,5 @@ def init():
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
-  }
-  cherrypy.tree.mount(TestPlugin(), '/webhooks/test', conf)
+    }
+    cherrypy.tree.mount(TestPlugin(), '/webhooks/test', conf)

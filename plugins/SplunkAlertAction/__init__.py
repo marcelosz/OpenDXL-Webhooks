@@ -6,6 +6,9 @@ __license__ = "GPL"
 
 import sys, cherrypy, json
 import conf_util
+from dxl_util import DXLClient
+import dxl_globals
+
 #add parent path to import modules
 sys.path.append("..")
 
@@ -29,8 +32,12 @@ class NetworkMisuseHandler(object):
     @cherrypy.tools.accept(media='application/json')
     def POST(self):
         body = cherrypy.request.body.read()
-        json_body = json.loads(body)
-        print("JSON Request Body: ", json.dumps(json_body, indent=2,sort_keys=False))
+        try:
+            json_body = json.loads(body)
+            print("JSON Request Body: ", json.dumps(json_body, indent=2,sort_keys=False))
+        except Exception as e: 
+            print "Erro"
+            dxl_client.publish("/opendxl/webhooks/event/status", "connected")
         return "OK"
 
 @cherrypy.expose
@@ -54,6 +61,6 @@ def init():
                        'route': route, 
                        'filter': conf_util.plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
                        'fields': conf_util.plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
-                        'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic'] })
+                       'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic'] })
         handler_obj = handlers[name]()
         cherrypy.tree.mount(handler_obj, route, webapp_conf)

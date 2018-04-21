@@ -8,6 +8,7 @@ __license__ = "GPL"
 from configobj import ConfigObj, ConfigObjError
 cfg = None
 plugin_cfg = None
+dxl_cfg = None
 
 #
 # Read ConfigObj from file

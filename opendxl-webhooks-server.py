@@ -13,11 +13,12 @@ import tokenize
 import cherrypy
 from configobj import ConfigObj, ConfigObjError
 import conf_util
+import dxl_globals
 import dxl_util
 
 # Enable logging, this will also direct built-in DXL and CherryPy log messages.
 # See - https://docs.python.org/2/howto/logging-cookbook.html
-log_formatter = logging.Formatter('%(asctime)s opendxl_webhooks_server (%(name)s) %(levelname)s: %(message)s')
+log_formatter = logging.Formatter('%(asctime)s opendxl-webhooks-server (%(name)s) %(levelname)s: %(message)s')
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 logger = logging.getLogger()
@@ -43,7 +44,7 @@ def create_arg_parser():
     #parser.add_argument("filter_query", help="Query used to filter desired observables (confidence, type, time window, ...).", metavar="FILTER_QUERY")
     parser.add_argument("-c", "--configfile", help="Configuration file.", default="/etc/opendxl-webhooks/server.conf")
     #parser.add_argument("-d", "--dryrun", help="***.", action='store_true', default=False)
-    parser.add_argument("-l", "--loglevel", help="Logging level (DEBUG, INFO or ERROR).", default="INFO")
+    parser.add_argument("-l", "--loglevel", help="Logging level (DEBUG, INFO or ERROR). Dafault is INFO.", default="INFO")
     #parser.add_argument("-p", "--pprint", help="Pretty print exported observables to STDOUT.", action='store_true', default=False)
 
     return parser
@@ -107,17 +108,29 @@ def main(argv):
     if not conf_util.cfg:
         logger.error("Error reading plugins config file!")
         exit(1)
+    # set DXL config var
+    conf_util.dxl_cfg = conf_util.cfg['DXL']['Config']
 
+    #
     # get plugins and execute their initializers
+    #
+    logger.info("Loading plugins...")
     init_plugins(conf_util.cfg['Server']['PluginsDir'])
+    logger.info("Plugins loaded!")
 
-    # DXL init and connection
-    dxl_config = dxl_util.config_init(conf_util.cfg['DXL']['Config'])
-    dxl_client = dxl_util.connect(dxl_config)
-    if dxl_client:
-        dxl_util.publish(dxl_client, "/opendxl/webhooks/event/status", "connected")
+    #
+    # init and connect DXL client
+    # 
+    logger.info("Initializing and connecting OpenDXL client...")
+    if not dxl_util.init(conf_util.dxl_cfg):
+        exit(1)
+    dxl_globals.dxl_client.publish("/opendxl/webhooks/event/status", "Client connected")
+    logger.info("OpenDXL client connected!")
 
+    #
     # setup and run the CherryPy app
+    #
+    logger.info("Starting HTTP server...")
     cherrypy.config.update({'server.socket_host': conf_util.cfg['Server']['BindAddress'],
                             'server.socket_port': int(conf_util.cfg['Server']['BindPort']),
                             'log.screen': conf_util.cfg['Server']['CherryPyLoggerEnable'] in ['true', 'True', 'yes', 'Yes'],
