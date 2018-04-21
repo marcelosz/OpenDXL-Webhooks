@@ -1,1 +1,3 @@
 *.pyc
+opendxl_util/
+conf/dxlconfig/
