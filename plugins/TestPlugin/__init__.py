@@ -8,7 +8,7 @@ import sys, cherrypy
 #add parent path to import modules
 sys.path.append("..")
 import conf_util
-import dxl_globals
+from opendxl_util.settings import opendxl_client
 
 import logging
 logger = logging.getLogger()
@@ -24,7 +24,7 @@ class TestPlugin(object):
         print("Request Body: ", body)
         #global dxl_client
         #dxl_client.publish("/opendxl/webhooks/event/test", body)
-        dxl_globals.dxl_client.publish("/opendxl/webhooks/event/test", "Test ok!")        
+        opendxl_client.publish("/opendxl/webhooks/event/test", "Test ok!")        
         return "OK"
         
 def init():

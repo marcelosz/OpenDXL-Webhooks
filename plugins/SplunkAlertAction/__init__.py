@@ -6,8 +6,8 @@ __license__ = "GPL"
 
 import sys, cherrypy, json
 import conf_util
-from dxl_util import DXLClient
-import dxl_globals
+#from dxl_util import DXLClient
+#import dxl_globals
 
 #add parent path to import modules
 sys.path.append("..")
