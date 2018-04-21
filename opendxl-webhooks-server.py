@@ -13,8 +13,7 @@ import tokenize
 import cherrypy
 from configobj import ConfigObj, ConfigObjError
 import conf_util
-#import dxl_util
-#import requests, json, re, urllib3, time
+import dxl_util
 
 # Enable logging, this will also direct built-in DXL and CherryPy log messages.
 # See - https://docs.python.org/2/howto/logging-cookbook.html

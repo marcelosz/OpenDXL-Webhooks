@@ -8,31 +8,41 @@ __license__ = "GPL"
 from dxlclient.client import DxlClient
 from dxlclient.client_config import DxlClientConfig
 from dxlclient.message import Event
-import logging
 
+import logging
 logger = logging.getLogger()
+
+dxl_config = None
+dxl_client = None
+
+#
+# DXL init_and_connect
+#
+def init_and_connect(cfg_file):
+    init(cfg_file)
+    connect()
 
 #
 # DXL config initialization
 #
-def config_init(cfg_file):
+def init(cfg_file):
     # TODO - enhance error handling here
     # DxlClientConfig from DXL configuration file
     logger.info("Loading DXL config from: %s", cfg_file)
-    return DxlClientConfig.create_dxl_config_from_file(cfg_file)
+    dxl_config = DxlClientConfig.create_dxl_config_from_file(cfg_file)
 
 #
 # DXL broker connection
 #
-def connect(dxl_config):
+def connect():
     try:
         dxl_client = DxlClient(dxl_config)
         logger.debug("Connecting to DXL broker...")
         dxl_client.connect()
-        return dxl_client
+        return True
     except Exception as e:
         logger.error("Could not initialize OpenDXL client ({0}).".format(e.message))
-        return None
+        return False
 
 #
 # Send message via DXL
