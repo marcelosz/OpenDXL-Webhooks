@@ -98,24 +98,24 @@ def main(argv):
         logger.setLevel(logging.ERROR)    
 
     logger.info("Starting OpenDXL-Webhooks server...")
+    
     # read main cfg file
     conf_util.cfg = conf_util.read_cfg(args.configfile)
     if not conf_util.cfg:
         logger.error("Error reading main config file!")
         exit(1)
+    
     # read plugins cfg file
     conf_util.plugin_cfg = conf_util.read_cfg(conf_util.cfg['Server']['PluginsConfig'])
     if not conf_util.cfg:
         logger.error("Error reading plugins config file!")
         exit(1)
-    # set DXL config var
-    conf_util.dxl_cfg = conf_util.cfg['DXL']['Config']
-
+    
     #
     # init and connect DXL client
     # 
     logger.info("Initializing and connecting OpenDXL client...")
-    if not opendxl_util.init(conf_util.dxl_cfg):
+    if not opendxl_util.init(conf_util.cfg['DXL']['Config']):
         exit(1)
     opendxl_util.send_status_msg("OpenDXL-Webhooks-Server client connected.")
     logger.info("OpenDXL client connected!")
