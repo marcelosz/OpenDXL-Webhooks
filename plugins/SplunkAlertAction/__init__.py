@@ -4,13 +4,9 @@
 __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
-import sys, cherrypy, json
-import conf_util
-#from dxl_util import DXLClient
-#import dxl_globals
-
-#add parent path to import modules
-sys.path.append("..")
+import sys, cherrypy
+from conf_util import plugin_cfg
+from opendxl_util.settings import opendxl_client
 
 alerts = []
 
@@ -55,12 +51,12 @@ handlers = {'NetworkMisuse': NetworkMisuseHandler, 'NetworkAttack': NetworkAttac
 #
 def init():
     # NetworkMisuse handler
-    for name in conf_util.plugin_cfg['SplunkAlertAction']['Alerts']:
-        route = conf_util.plugin_cfg['SplunkAlertAction'][name]['Route']   
+    for name in plugin_cfg['SplunkAlertAction']['Alerts']:
+        route = plugin_cfg['SplunkAlertAction'][name]['Route']   
         alerts.append({'name': name, 
                        'route': route, 
-                       'filter': conf_util.plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
-                       'fields': conf_util.plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
-                       'topic': conf_util.plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic'] })
+                       'filter': plugin_cfg['SplunkAlertAction'][name]['SearchNameFilter'], 
+                       'fields': plugin_cfg['SplunkAlertAction'][name]['AlertFields'],
+                       'topic': plugin_cfg['SplunkAlertAction'][name]['DXLMsgTopic'] })
         handler_obj = handlers[name]()
         cherrypy.tree.mount(handler_obj, route, webapp_conf)

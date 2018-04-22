@@ -23,7 +23,7 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.addHandler(console_handler)
-logging.getLogger('cherrypy').propagate = False
+logging.getLogger("cherrypy").propagate = False
 
 def create_arg_parser():
     """
@@ -131,10 +131,14 @@ def main(argv):
     # setup and run the CherryPy app
     #
     logger.info("Starting HTTP server...")
+    enable_log_to_screen = False
+    if conf_util.cfg['Server']['CherryPyLoggerEnable'] in ['true', 'True', 'yes', 'Yes']:
+        enable_log_to_screen = True
     cherrypy.config.update({'server.socket_host': conf_util.cfg['Server']['BindAddress'],
                             'server.socket_port': int(conf_util.cfg['Server']['BindPort']),
-                            'log.screen': conf_util.cfg['Server']['CherryPyLoggerEnable'] in ['true', 'True', 'yes', 'Yes'],
+                            'log.screen': enable_log_to_screen
                             })
+                      
     cherrypy.engine.start()
     cherrypy.engine.block()
 

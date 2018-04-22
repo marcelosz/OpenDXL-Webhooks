@@ -5,9 +5,7 @@ __author__ = "Marcelo Souza"
 __license__ = "GPL"
 
 import sys, cherrypy
-#add parent path to import modules
-sys.path.append("..")
-import conf_util
+from conf_util import plugin_cfg
 from opendxl_util.settings import opendxl_client
 
 import logging
@@ -15,16 +13,12 @@ logger = logging.getLogger()
 
 @cherrypy.expose
 class TestPlugin(object):
-
     @cherrypy.tools.accept(media='text/plain')
-
     def POST(self):
         #print("Request Headers: ", cherrypy.request.headers)
         body = cherrypy.request.body.read()
-        print("Request Body: ", body)
-        #global dxl_client
-        #dxl_client.publish("/opendxl/webhooks/event/test", body)
-        opendxl_client.publish("/opendxl/webhooks/event/test", "Test ok!")        
+        logger.debug("Request body: %s", body)
+        opendxl_client.publish(plugin_cfg['TestPlugin']['DXLMsgTopic'], body)
         return "OK"
         
 def init():
@@ -37,4 +31,4 @@ def init():
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
     }
-    cherrypy.tree.mount(TestPlugin(), '/webhooks/test', conf)
+    cherrypy.tree.mount(TestPlugin(), plugin_cfg['TestPlugin']['Route'], conf)
