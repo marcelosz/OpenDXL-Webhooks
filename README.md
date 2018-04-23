@@ -7,7 +7,7 @@ OpenDXL Webhooks Server is a lightweight Python server that may be used to integ
 ![Alt](https://user-images.githubusercontent.com/2834720/39140614-7e89e964-46fb-11e8-8edb-fca21c907469.png "Splunk Webhooks sample")
 
 A screenshot of OpenDXL Webhooks Server in action:
-![Alt](https://user-images.githubusercontent.com/2834720/39140613-7e2ac074-46fb-11e8-8c78-f938b30f3374.png "OWS")
+![Alt](https://user-images.githubusercontent.com/2834720/39141369-059631ea-46fe-11e8-9446-fe3e8b30df72.png "OWS")
 
 ## Getting Started
 
