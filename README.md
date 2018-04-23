@@ -11,11 +11,11 @@ A screenshot of OpenDXL Webhooks Server in action:
 
 ## Getting Started
 
-Right now the best way to use OpenDXL Webhooks Server is through the following Docker image: 
+Right now the best way to use OpenDXL Webhooks Server is through [this Docker image](https://hub.docker.com/r/marcelosz/opendxl-webhooks/).
 
 ## Documentation
 
-Coming soon...
+Please use the [Docker repository](https://hub.docker.com/r/marcelosz/opendxl-webhooks/) documentation for usage info.
 
 ## Bugs and Feedback
 
