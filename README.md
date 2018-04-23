@@ -1,6 +1,6 @@
 # OpenDXL Webhooks Server
 
-OpenDXL Webhooks Server is a lightweight Python server that may be used to integrate multiple platforms with McAfee OpenDXL (Data Exchange Layer) through Webhooks (HTTP POST requests). A well-known cybersecurity platform that uses Webhooks is Splunk (see screenshot bellow).
+OpenDXL Webhooks Server is a lightweight Python server that may be used to integrate multiple platforms with McAfee [OpenDXL](https://www.opendxl.com/) (Data Exchange Layer) through Webhooks (HTTP POST requests). A well-known cybersecurity platform that uses Webhooks is Splunk (see screenshot bellow).
 
 A screenshot of OpenDXL Webhooks Server in action:
 ![Alt](https://user-images.githubusercontent.com/2834720/39141369-059631ea-46fe-11e8-9446-fe3e8b30df72.png "OWS")
