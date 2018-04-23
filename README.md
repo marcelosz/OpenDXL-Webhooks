@@ -23,4 +23,4 @@ For bugs, questions and discussions please use [GitHub Issues](https://github.co
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE.md) file for details
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
